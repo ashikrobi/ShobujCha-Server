@@ -39,32 +39,18 @@ client.connect(err => {
     const file = req.files.file;
     const variant = req.body.variant;
     const price = req.body.price;
-    console.log(variant, price, file);
-    const filePath = `${__dirname}/variants/${file.name}`;
-    file.mv(filePath, error => {
-      if (err) {
-        console.log(err);
-        res.status(500).send({ msg: 'Failed to upload image' });
-      }
-      const newImg = fs.readFileSync(filePath);
+      const newImg = file.data;
       const encImg = newImg.toString('base64');
       
       const image = {
-        contentType: req.files.file.mimetype,
-        size: req.files.file.size,
+        contentType: file.mimetype,
+        size: file.size,
         img: Buffer.from(encImg, 'base64')
       };
       teaCollection.insertOne({variant, price, image})
         .then(result => {
-          fs.remove(filePath, error => {
-            if (error) {
-              console.log(error)
-              res.status(500).send({ msg: 'Failed to upload image' });
-            }
             res.send(result.insertedCount > 0)
-          })
       })
-    });
   })
 
   
