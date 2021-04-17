@@ -32,6 +32,7 @@ app.listen(process.env.PORT || port, () => {
 //connect to mongodb
 client.connect(err => {
   const teaCollection = client.db("shobujCha").collection("teaVariant");
+  const reviewCollection = client.db("shobujCha").collection("reviews");
   console.log('connection to db successful')
   
 //post data to mongodb
@@ -52,6 +53,15 @@ client.connect(err => {
             res.send(result.insertedCount > 0)
       })
   })
+  //review API
+  app.post('/addReview', (req, res) => {
+    const review = req.body;
+    reviewCollection.insertOne(review)
+      .then(result => {
+        // console.log(result)
+      res.send(result.insertedCount > 0)
+    })
+  })
 
   
 //read data from mongodb
@@ -61,5 +71,11 @@ client.connect(err => {
       res.send(documents);
     })
   })
-
+//get reviews API
+    app.get('/reviews', (req, res) => {
+        reviewCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
+    })
 });
