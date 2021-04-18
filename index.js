@@ -33,6 +33,7 @@ app.listen(process.env.PORT || port, () => {
 client.connect(err => {
   const teaCollection = client.db("shobujCha").collection("teaVariant");
   const reviewCollection = client.db("shobujCha").collection("reviews");
+  const adminCollection = client.db("shobujCha").collection("admins");
   console.log('connection to db successful')
   
 //post data to mongodb
@@ -62,6 +63,23 @@ client.connect(err => {
       res.send(result.insertedCount > 0)
     })
   })
+
+  //admin API
+    app.post('/addAdmin', (req, res) => {
+    const admin = req.body;
+    adminCollection.insertOne(admin)
+      .then(result => {
+        console.log(result)
+      res.send(result.insertedCount > 0)
+    })
+    })
+  //get admin API
+      app.get('/admin', (req, res) => {
+        adminCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
+    });
 
   
 //read data from mongodb
