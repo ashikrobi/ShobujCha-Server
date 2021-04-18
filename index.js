@@ -74,10 +74,11 @@ client.connect(err => {
     })
     })
   //get admin API
-      app.get('/admin', (req, res) => {
-        adminCollection.find({})
-            .toArray((err, documents) => {
-                res.send(documents);
+  app.post('/isAdmin', (req, res) => {
+    const email = req.body.email;
+        adminCollection.find({email: email})
+            .toArray((err, admin) => {
+                res.send(admin.length > 0);
             })
     });
 
